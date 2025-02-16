@@ -1,36 +1,41 @@
 package com.agalvanmartin.pokedexapp.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.agalvanmartin.pokedexapp.ui.screen.*
+import androidx.navigation.compose.rememberNavController
+import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
+import com.agalvanmartin.pokedexapp.ui.screen.LoginScreen
+import com.agalvanmartin.pokedexapp.ui.screen.RegisterScreen
+import com.agalvanmartin.pokedexapp.ui.screen.ForgotPasswordScreen
+import com.agalvanmartin.pokedexapp.ui.screen.MainScreen
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 
 @Composable
-fun AppNavigation(navController: NavHostController) {
-    NavHost(
-        navController = navController,
-        startDestination = "login"
-    ) {
-        composable("login") {
-            LoginScreen(navController)
-        }
-        composable("register") {
-            RegisterScreen(navController)
-        }
-        composable("pokemon_list") {
-            MainScreen(navController)
-        }
-        composable("forgot_password") {
-            ForgotPasswordScreen(navController)
-        }
-        composable("pokemon_detail/{pokemonId}/{pokemonName}") { backStackEntry ->
-            val pokemonId = backStackEntry.arguments?.getString("pokemonId")?.toIntOrNull()
-            val pokemonName = backStackEntry.arguments?.getString("pokemonName")
+fun AppNavigation(authManager: AuthManager) {
+    val navController = rememberNavController()
+    val isAuthenticated by rememberUpdatedState(authManager.getCurrentUser() != null)
 
-            if (pokemonId != null && pokemonName != null) {
-                PokemonDetailScreen(navController, pokemonId, pokemonName)
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) {
+            navController.navigate(Destinations.Main.route) {
+                popUpTo(Destinations.Login.route) { inclusive = true }
+            }
+        } else {
+            navController.navigate(Destinations.Login.route) {
+                popUpTo(0)
             }
         }
+    }
+
+    NavHost(navController = navController, startDestination = if (isAuthenticated) Destinations.Main.route else Destinations.Login.route) {
+        composable(Destinations.Login.route) { LoginScreen(navController) }
+        composable(Destinations.Register.route) { RegisterScreen(navController) }
+        composable(Destinations.ResetPassword.route) { ResetPasswordScreen(navController) }
+        composable(Destinations.Main.route) { MainScreen() }
     }
 }

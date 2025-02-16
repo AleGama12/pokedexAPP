@@ -5,8 +5,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,17 +14,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.agalvanmartin.pokedexapp.ui.screen.LightBlue
-import com.google.firebase.auth.FirebaseAuth
+import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
 import kotlinx.coroutines.launch
 
 @Composable
-fun ForgotPasswordScreen(navController: NavController) {
+fun ForgotPasswordScreen(authManager: AuthManager, onPasswordResetSuccess: () -> Unit) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-    val auth = FirebaseAuth.getInstance()
 
     Column(
         modifier = Modifier
@@ -35,13 +30,6 @@ fun ForgotPasswordScreen(navController: NavController) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        IconButton(
-            onClick = { navController.navigate("login") },
-            modifier = Modifier.align(Alignment.Start)
-        ) {
-            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Volver al Login", tint = LightBlue)
-        }
-
         Text(
             text = "Olvidó su contraseña",
             fontSize = 24.sp,
@@ -61,7 +49,18 @@ fun ForgotPasswordScreen(navController: NavController) {
         Button(
             onClick = {
                 scope.launch {
-                    resetPassword(email, auth, context, navController)
+                    authManager.resetPassword(email) { success, message ->
+                        if (success) {
+                            Toast.makeText(
+                                context,
+                                "Se ha enviado un correo para restablecer la contraseña",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            onPasswordResetSuccess()
+                        } else {
+                            Toast.makeText(context, "Error: $message", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             },
             shape = RoundedCornerShape(50.dp),
@@ -69,29 +68,9 @@ fun ForgotPasswordScreen(navController: NavController) {
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(horizontal = 40.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = LightBlue, contentColor = Color.White)
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
         ) {
             Text(text = "Recuperar contraseña")
         }
-    }
-}
-
-fun resetPassword(email: String, auth: FirebaseAuth, context: Context, navController: NavController) {
-    if (email.isNotEmpty()) {
-        auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(
-                        context,
-                        "Se ha enviado un correo para restablecer la contraseña",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    navController.navigate("login")
-                } else {
-                    Toast.makeText(context, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-    } else {
-        Toast.makeText(context, "Ingrese un correo válido", Toast.LENGTH_SHORT).show()
     }
 }

@@ -7,4 +7,3 @@ data class Pokemon(
     val id: Int
         get() = url.split("/").filter { it.isNotEmpty() }.last().toInt()
 }
-
