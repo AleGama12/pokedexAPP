@@ -12,26 +12,13 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.agalvanmartin.pokedexapp.R
 import kotlinx.coroutines.tasks.await
 
-sealed class AuthRes<out T> {
-    data class Success<out T>(val data: T) : AuthRes<T>()
-    data class Error(val message: String) : AuthRes<Nothing>()
-}
-
 class AuthManager(private val context: Context) {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
-    private val googleSignInClient: GoogleSignInClient by lazy {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        GoogleSignIn.getClient(context, gso)
-    }
 
     suspend fun createUserWithEmailAndPassword(email: String, password: String): AuthRes<FirebaseUser?> {
         return try {
@@ -66,26 +53,56 @@ class AuthManager(private val context: Context) {
         } catch (e: Exception) {
             AuthRes.Error(e.message ?: "Error al restablecer la contraseña")
         }
+
     }
 
-    fun getGoogleSignInClient(): GoogleSignInClient = googleSignInClient
-
-    suspend fun firebaseAuthWithGoogle(idToken: String): AuthRes<FirebaseUser> {
+    suspend fun signInAnonymously(): AuthRes<FirebaseUser?> {
         return try {
-            val credential = GoogleAuthProvider.getCredential(idToken, null)
-            val authResult = auth.signInWithCredential(credential).await()
-            AuthRes.Success(authResult.user!!)
+            val user = auth.signInAnonymously().await().user
+            AuthRes.Success(user)
+        } catch (e: Exception) {
+            AuthRes.Error(e.message ?: "Error al iniciar sesión anónima")
+        }
+    }
+
+
+    fun handleSignInResult(task: Task<GoogleSignInAccount>):
+            AuthRes<GoogleSignInAccount?> {
+        return try {
+            val account = task.getResult(ApiException::class.java)
+            AuthRes.Success(account)
+        } catch (e: ApiException) {
+            AuthRes.Error(e.message ?: "Error al iniciar sesión con Google")
+        }
+    }
+
+    suspend fun googleSignInCredential(credential: AuthCredential):
+            AuthRes<FirebaseUser?> {
+        return try {
+            val firebaseUser = auth.signInWithCredential(credential).await()
+            firebaseUser.user?.let {
+                AuthRes.Success(it)
+            } ?: throw Exception("User is null")
         } catch (e: Exception) {
             AuthRes.Error(e.message ?: "Error al iniciar sesión con Google")
         }
     }
 
-    suspend fun signInAnonymously(): AuthRes<FirebaseUser> {
-        return try {
-            val authResult = auth.signInAnonymously().await()
-            AuthRes.Success(authResult.user!!)
-        } catch (e: Exception) {
-            AuthRes.Error(e.message ?: "Error al iniciar sesión como invitado")
-        }
+    private val googleSignInClient: GoogleSignInClient by lazy {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        GoogleSignIn.getClient(context, gso)
     }
+    fun signInWithGoogle(googleSignInLauncher: ActivityResultLauncher<Intent>) {
+        val signInIntent = googleSignInClient.signInIntent
+        googleSignInLauncher.launch(signInIntent)
+    }
+
+}
+
+sealed class AuthRes<out T> {
+    data class Success<T>(val data: T) : AuthRes<T>()
+    data class Error(val errorMessage: String) : AuthRes<Nothing>()
 }

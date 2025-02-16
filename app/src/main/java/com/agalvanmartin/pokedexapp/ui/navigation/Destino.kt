@@ -13,3 +13,6 @@ object Main
 
 @Serializable
 object ForgotPassword
+
+@Serializable
+object PokemonDetail

@@ -6,16 +6,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
-import com.agalvanmartin.pokedexapp.ui.screen.ForgotPasswordScreen
-import com.agalvanmartin.pokedexapp.ui.screen.LoginScreen
-import com.agalvanmartin.pokedexapp.ui.screen.MainScreen
-import com.agalvanmartin.pokedexapp.ui.screen.RegisterScreen
+import com.agalvanmartin.pokedexapp.ui.screen.*
 
 @Composable
 fun APPnavigation(auth: AuthManager) {
     val navController = rememberNavController()
     val context = LocalContext.current
-
 
     NavHost(navController = navController, startDestination = Login) {
         composable<Login> {
@@ -32,28 +28,25 @@ fun APPnavigation(auth: AuthManager) {
         }
 
         composable<SignUp> {
-            RegisterScreen(
-                auth
-            ) { navController.popBackStack() }
+            RegisterScreen(auth) { navController.popBackStack() }
         }
 
         composable<Main> {
-            MainScreen(
-                auth
-            ) {
+            MainScreen(auth, navController)
+        }
+
+        composable<ForgotPassword> {
+            ForgotPasswordScreen(auth) {
                 navController.navigate(Login) {
-                    popUpTo(Main) { inclusive = true }
+                    popUpTo(Login) { inclusive = true }
                 }
             }
         }
 
-        composable <ForgotPassword> {
-            ForgotPasswordScreen(
-                auth
-            ) { navController.navigate(Login) {
-                popUpTo(Login){ inclusive = true }
-            } }
+        composable<PokemonDetail> { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 1
+            val name = backStackEntry.arguments?.getString("name") ?: "Unknown"
+            PokemonDetailScreen(navController, id, name)
         }
     }
 }
-//comentario

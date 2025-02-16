@@ -4,8 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
-import com.agalvanmartin.pokedexapp.ui.navigation.AppNavigation
+import com.agalvanmartin.pokedexapp.ui.navigation.APPnavigation
 import com.agalvanmartin.pokedexapp.ui.theme.MyAppTheme
+import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +14,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyAppTheme {
                 val navController = rememberNavController()
-                AppNavigation(navController = navController)
+                val authManager = AuthManager(this)  // Instancia de AuthManager
+                APPnavigation(auth = authManager)
             }
         }
     }

@@ -11,57 +11,70 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import androidx.navigation.NavController
 import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
-import com.google.firebase.auth.FirebaseAuth
 
 val LightBlue = Color(0xFF87CEFA) // Azul más suave
 
 @Composable
-fun MainScreen(navController: AuthManager, viewModel: () -> Unit = viewModel()) {
-    val pokemonList = viewModel.pokemonList.collectAsState().value
+fun MainScreen(authManager: AuthManager, navController: NavController) {
+    val user = authManager.getCurrentUser()
 
-    Surface(color = Color.White) {
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Text(text = "Listado de Pokémon", style = MaterialTheme.typography.headlineMedium, color = Color.Black, modifier = Modifier.padding(bottom = 16.dp))
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(
+            onClick = {
+                authManager.signOut()
+                navController.navigate("login") {
+                    popUpTo("main") { inclusive = true }
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+        ) {
+            Text("Cerrar Sesión", color = Color.White)
+        }
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(pokemonList.size) { index ->
-                    val pokemon = pokemonList[index]
-                    Column(
-                        modifier = Modifier.fillMaxWidth().clickable { navController.navigate("pokemon_detail/${pokemon.id}/${pokemon.name}") },
-                        horizontalAlignment = Alignment.CenterHorizontally
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = "Bienvenido, ${user?.email ?: "Invitado"}",
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color.Black,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(10) { index ->  // Mostrando solo 10 Pokémon
+                val pokemonId = index + 1
+                val pokemonName = "Pokemon #$pokemonId"
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .clickable {
+                            navController.navigate("pokemon_detail/$pokemonId/$pokemonName")
+                        },
+                    colors = CardDefaults.cardColors(containerColor = LightBlue)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         AsyncImage(
-                            model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png",
-                            contentDescription = "Image of ${pokemon.name}",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp)
+                            model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png",
+                            contentDescription = "Pokemon Image",
+                            modifier = Modifier.size(64.dp)
                         )
-                        Text(
-                            text = pokemon.name.capitalize(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center,
-                            color = Color.Black,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(text = pokemonName, style = MaterialTheme.typography.bodyLarge)
                     }
                 }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    FirebaseAuth.getInstance().signOut()
-                    navController.navigate("login") {
-                        popUpTo("pokemon_list") { inclusive = true }
-                    }
-                },
-                modifier = Modifier.align(Alignment.Start),
-                colors = ButtonDefaults.buttonColors(containerColor = LightBlue, contentColor = Color.White)
-            ) {
-                Text("Cerrar Sesión")
             }
         }
     }
