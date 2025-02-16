@@ -12,5 +12,4 @@ interface PokeApiService {
 
     @GET("pokemon?limit=30&offset=0")
     suspend fun getPokemonList(): PokemonResponse
-
 }

@@ -17,12 +17,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.agalvanmartin.pokedexapp.ui.screen.LightBlue
+import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @Composable
-fun ForgotPasswordScreen(navController: NavController) {
+fun ForgotPasswordScreen(navController: AuthManager, function: () -> Unit) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()

@@ -10,16 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import com.agalvanmartin.pokedexapp.viewmodel.PokemonViewModel
 import coil.compose.AsyncImage
+import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
 import com.google.firebase.auth.FirebaseAuth
 
 val LightBlue = Color(0xFF87CEFA) // Azul más suave
 
 @Composable
-fun MainScreen(navController: NavHostController, viewModel: PokemonViewModel = viewModel()) {
+fun MainScreen(navController: AuthManager, viewModel: () -> Unit = viewModel()) {
     val pokemonList = viewModel.pokemonList.collectAsState().value
 
     Surface(color = Color.White) {

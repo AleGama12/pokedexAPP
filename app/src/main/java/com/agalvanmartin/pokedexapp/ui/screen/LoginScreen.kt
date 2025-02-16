@@ -14,12 +14,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
 import com.google.firebase.auth.FirebaseAuth
-import com.agalvanmartin.pokedexapp.ui.screen.LightBlue
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(
+    navController: AuthManager,
+    function: () -> Unit,
+    function1: () -> Unit,
+    function2: () -> Unit
+) {
     val auth = FirebaseAuth.getInstance()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

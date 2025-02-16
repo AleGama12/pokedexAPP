@@ -9,12 +9,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.agalvanmartin.pokedexapp.viewmodel.AuthViewModel
-import com.agalvanmartin.pokedexapp.ui.screen.LightBlue
+import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
 
 @Composable
-fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel = viewModel()) {
+fun RegisterScreen(navController: AuthManager, authViewModel: AuthViewModel = viewModel()) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
