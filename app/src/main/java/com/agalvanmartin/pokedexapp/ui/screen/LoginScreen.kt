@@ -1,140 +1,145 @@
 package com.agalvanmartin.pokedexapp.ui.screen
 
-import android.content.Context
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.agalvanmartin.pokedexapp.R
-import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.agalvanmartin.pokedexapp.ui.screen.LightBlue
 
 @Composable
-fun LoginScreen(
-    auth: AuthManager,
-    onNavigateToSignUp: () -> Unit,
-    onNavigateToHome: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit
-) {
+fun LoginScreen(navController: NavController) {
+    val auth = FirebaseAuth.getInstance()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val googleSignLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        scope.launch {
-            auth.signInWithGoogle(result) { success, message ->
-                if (success) {
-                    Toast.makeText(context, "Inicio de sesión correcto", Toast.LENGTH_SHORT).show()
-                    onNavigateToHome()
-                } else {
-                    Toast.makeText(context, "Error: $message", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
+    var isLoading by remember { mutableStateOf(false) }
+    var loginError by remember { mutableStateOf<String?>(null) }
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextField(
+        Text(text = "Pokedex", style = MaterialTheme.typography.headlineMedium, color = Color.Black)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Correo Electrónico") },
+            label = { Text("Email") },
+            modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
-        Spacer(modifier = Modifier.height(10.dp))
-        TextField(
+        if (email.isNotEmpty() && !email.contains("@gmail.com")) {
+            Text(text = "El email debe contener '@gmail.com'", color = MaterialTheme.colorScheme.error)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val icon = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = icon, contentDescription = "Mostrar/Ocultar contraseña")
+                }
+            }
         )
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(onClick = {
-            scope.launch {
-                signIn(email, password, context, auth, onNavigateToHome)
-            }
-        }) {
-            Text("Iniciar Sesión")
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = {
-            scope.launch {
-                signUp(email, password, context, auth, onNavigateToHome)
-            }
-        }) {
-            Text("Registrarse")
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = { auth.signInWithGoogle(googleSignLauncher) }) {
-            Text("Iniciar con Google")
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = {
-            scope.launch {
-                signInAnonymously(auth, context, onNavigateToHome)
-            }
-        }) {
-            Text("Ingresar como Invitado")
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        TextButton(onClick = { onNavigateToForgotPassword() }) {
-            Text("¿Olvidaste tu contraseña?")
-        }
-        TextButton(onClick = { onNavigateToSignUp() }) {
-            Text("¿No tienes cuenta? Regístrate aquí")
-        }
-    }
-}
+        Spacer(modifier = Modifier.height(8.dp))
 
-suspend fun signIn(email: String, password: String, context: Context, auth: AuthManager, onSuccess: () -> Unit) {
-    val result = withContext(Dispatchers.IO) { auth.signInWithEmail(email, password) }
-    if (result) {
-        Toast.makeText(context, "Inicio de sesión correcto", Toast.LENGTH_SHORT).show()
-        onSuccess()
-    } else {
-        Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_SHORT).show()
-    }
-}
+        if (loginError != null) {
+            Text(text = loginError!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(bottom = 8.dp))
+        }
 
-suspend fun signUp(email: String, password: String, context: Context, auth: AuthManager, onSuccess: () -> Unit) {
-    val result = withContext(Dispatchers.IO) { auth.signUpWithEmail(email, password) }
-    if (result) {
-        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-        onSuccess()
-    } else {
-        Toast.makeText(context, "Error al registrar", Toast.LENGTH_SHORT).show()
-    }
-}
+        Button(onClick = {
+            when {
+                email.isEmpty() -> loginError = "El email no puede estar vacío"
+                password.isEmpty() -> loginError = "La contraseña no puede estar vacía"
+                !email.contains("@gmail.com") -> loginError = "El email debe contener '@gmail.com'"
+                else -> {
+                    isLoading = true
+                    auth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener { task ->
+                            isLoading = false
+                            if (task.isSuccessful) {
+                                navController.navigate("pokemon_list") {
+                                    popUpTo("login") { inclusive = true }
+                                }
+                            } else {
+                                loginError = "Error: ${task.exception?.message}"
+                            }
+                        }
+                }
+            }
+        }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = LightBlue, contentColor = Color.White)) {
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            } else {
+                Text("Iniciar sesión")
+            }
+        }
 
-suspend fun signInAnonymously(auth: AuthManager, context: Context, onSuccess: () -> Unit) {
-    val result = withContext(Dispatchers.IO) { auth.signInAnonymously() }
-    if (result) {
-        Toast.makeText(context, "Inicio de sesión correcto", Toast.LENGTH_SHORT).show()
-        onSuccess()
-    } else {
-        Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_SHORT).show()
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botón de Entrar como invitado
+        Button(
+            onClick = {
+                auth.signInAnonymously()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            navController.navigate("pokemon_list") {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        } else {
+                            loginError = "Error: ${task.exception?.message}"
+                        }
+                    }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black, contentColor = Color.White)
+        ) {
+            Icon(imageVector = Icons.Filled.Visibility, contentDescription = "Modo Invitado") // Ícono del ojo
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Entrar como invitado")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botón de Iniciar sesión con Google
+        Button(
+            onClick = { },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Black)
+        ) {
+            Text("Iniciar sesión con Google")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botón de Registrarse
+        TextButton(onClick = { navController.navigate("register") }, modifier = Modifier.align(Alignment.Start)) {
+            Text("¿No tienes cuenta? Regístrate aquí", color = LightBlue)
+        }
+
+        // Botón de Restablecer contraseña
+        TextButton(onClick = { navController.navigate("forgot_password") }, modifier = Modifier.align(Alignment.Start)) {
+            Text("¿Olvidaste tu contraseña?", color = LightBlue)
+        }
     }
 }

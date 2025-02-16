@@ -11,19 +11,20 @@ import kotlinx.coroutines.launch
 
 class PokemonViewModel : ViewModel() {
     private val _pokemonList = MutableStateFlow<List<Pokemon>>(emptyList())
-    val pokemonList: StateFlow<List<Pokemon>> = _pokemonList
+    val pokemonList: StateFlow<List<Pokemon>> get() = _pokemonList
 
     init {
-        fetchPokemonList()
+        loadPokemon()
     }
 
-    private fun fetchPokemonList() {
+    private fun loadPokemon() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = ApiClient.apiService.getPokemonList()
+                val apiService = ApiClient.getPokeApiService()
+                val response = apiService.getPokemonList()
                 _pokemonList.value = response.results
             } catch (e: Exception) {
-                _pokemonList.value = emptyList()
+                e.printStackTrace()
             }
         }
     }
