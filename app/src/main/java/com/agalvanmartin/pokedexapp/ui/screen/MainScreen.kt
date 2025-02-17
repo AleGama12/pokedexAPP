@@ -1,5 +1,6 @@
 package com.agalvanmartin.pokedexapp.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,70 +11,88 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.agalvanmartin.pokedexapp.viewmodel.PokemonViewModel
 import coil.compose.AsyncImage
-import androidx.navigation.NavController
-import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
+import com.google.firebase.auth.FirebaseAuth
 
 val LightBlue = Color(0xFF87CEFA) // Azul más suave
 
 @Composable
-fun MainScreen(authManager: AuthManager, navController: NavController) {
-    val user = authManager.getCurrentUser()
+fun MainScreen(
+    navController: NavHostController,
+    viewModel: PokemonViewModel = viewModel(),
+    navigateToLogin: () -> Unit
+) {
+    val pokemonList = viewModel.pokemonList.collectAsState().value
+    val auth = FirebaseAuth.getInstance()
+    val user = auth.currentUser
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
-            onClick = {
-                authManager.signOut()
-                navController.navigate("login") {
-                    popUpTo("main") { inclusive = true }
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-        ) {
-            Text("Cerrar Sesión", color = Color.White)
+    // Verificar si el usuario está autenticado
+    LaunchedEffect(user) {
+        if (user == null) {
+            navigateToLogin()  // Si no hay usuario, redirigir al LoginScreen
         }
+    }
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "Bienvenido, ${user?.email ?: "Invitado"}",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color.Black,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
+    Surface(color = Color.White) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(10) { index ->  // Mostrando solo 10 Pokémon
-                val pokemonId = index + 1
-                val pokemonName = "Pokemon #$pokemonId"
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable {
-                            navController.navigate("pokemon_detail/$pokemonId/$pokemonName")
-                        },
-                    colors = CardDefaults.cardColors(containerColor = LightBlue)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+            Text(
+                text = "Listado de Pokémon",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.Black,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            // Botón para cerrar sesión
+            Button(
+                onClick = {
+                    auth.signOut()
+                    navigateToLogin()  // Redirigir al login después de cerrar sesión
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+            ) {
+                Text("Cerrar Sesión", color = Color.White)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(pokemonList.size) { index ->
+                    val pokemon = pokemonList[index]
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                val route = "pokemon_detail/${pokemon.id}/${pokemon.name}"
+                                Log.d("Navigation", "Navigating to: $route")
+
+                                // Asegurarse de que la ruta existe antes de navegar
+                                navController.navigate(route)
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally  // Alineación centrada
                     ) {
                         AsyncImage(
-                            model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png",
-                            contentDescription = "Pokemon Image",
-                            modifier = Modifier.size(64.dp)
+                            model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png",
+                            contentDescription = "Imagen de ${pokemon.name}",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(150.dp)
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(text = pokemonName, style = MaterialTheme.typography.bodyLarge)
+                        Spacer(modifier = Modifier.height(8.dp)) // Espacio entre imagen y texto
+                        Text(
+                            text = pokemon.name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

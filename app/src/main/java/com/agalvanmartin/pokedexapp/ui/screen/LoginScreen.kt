@@ -156,7 +156,7 @@ fun LoginScreen(
                     }
                 },
                 text = "Continuar como invitado",
-                icon = R.drawable.ic_incognito,
+                icon = com.google.android.gms.base.R.drawable.common_full_open_on_phone,
                 color = Color.White
             )
             Spacer(modifier = Modifier.height(15.dp))

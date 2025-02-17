@@ -22,7 +22,8 @@ fun PokemonDetailScreen(navController: NavController, pokemonId: Int, pokemonNam
     val coroutineScope = rememberCoroutineScope()
     var details by remember { mutableStateOf<PokemonDetail?>(null) }
 
-    LaunchedEffect(Unit) {
+    // Cargar detalles del Pokémon desde la API
+    LaunchedEffect(pokemonId) {
         coroutineScope.launch(Dispatchers.IO) {
             try {
                 details = ApiClient.getPokemonDetails(pokemonId)
@@ -39,22 +40,28 @@ fun PokemonDetailScreen(navController: NavController, pokemonId: Int, pokemonNam
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Botón de regreso
             IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.align(Alignment.Start)) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Volver", tint = LightBlue)
             }
 
+            // Título
             Text(
                 text = "Detalles de $pokemonName",
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(16.dp))
+
+            // Imagen del Pokémon
             AsyncImage(
                 model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$pokemonId.png",
-                contentDescription = "Image of $pokemonName",
+                contentDescription = "Imagen de $pokemonName",
                 modifier = Modifier.size(200.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
+
+            // Mostrar detalles del Pokémon
             details?.let {
                 Text(text = "ID: $pokemonId", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
                 Text(text = "Peso: ${it.weight} kg", style = MaterialTheme.typography.bodyMedium, color = Color.Black)

@@ -51,10 +51,10 @@ class AuthManager(private val context: Context) {
             auth.sendPasswordResetEmail(email).await()
             AuthRes.Success(Unit)
         } catch (e: Exception) {
-            AuthRes.Error(e.message ?: "Error al restablecer la contraseña")
+            AuthRes.Error(e.message ?: "Error al restablecer la contraseña. Verifique el correo ingresado.")
         }
-
     }
+
 
     suspend fun signInAnonymously(): AuthRes<FirebaseUser?> {
         return try {
