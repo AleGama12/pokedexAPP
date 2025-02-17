@@ -2,66 +2,88 @@ package com.agalvanmartin.pokedexapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
 import com.agalvanmartin.pokedexapp.ui.screen.*
 
 @Composable
 fun APPnavigation(auth: AuthManager) {
-    val navController = rememberNavController()
+    val navController = rememberNavController()  // Controlador de navegación
     val context = LocalContext.current
 
-    NavHost(navController = navController, startDestination = Login) {
-        composable<Login> {
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") {
             LoginScreen(
                 auth,
-                { navController.navigate(SignUp) },
+                { navController.navigate("signUp") },
                 {
-                    navController.navigate(Main) {
-                        popUpTo(Login) { inclusive = true }
+                    navController.navigate("main") {
+                        popUpTo("login") { inclusive = true }
                     }
                 },
-                { navController.navigate(ForgotPassword) }
+                { navController.navigate("forgotPassword") }
             )
         }
 
-        composable<SignUp> {
+        composable("signUp") {
             RegisterScreen(auth) { navController.popBackStack() }
         }
 
-        composable<Main> {
-            MainScreen(navController, navigateToLogin = {
-                navController.navigate(Login) {
-                    popUpTo(Login) { inclusive = true }
+        composable("main") {
+            MainScreen(
+                navController,
+                navigateToLogin = {
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 }
-            })
+            )
         }
 
-        composable<ForgotPassword> {
+        composable("forgotPassword") {
             ForgotPasswordScreen(auth) {
-                navController.navigate(Login) {
-                    popUpTo(Login) { inclusive = true }
+                navController.navigate("login") {
+                    popUpTo("login") { inclusive = true }
                 }
             }
         }
 
-        composable(
-            route = "pokemon_detail/{id}/{name}",
-            arguments = listOf(
-                navArgument("id") { type = NavType.IntType },
-                navArgument("name") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id") ?: 1
-            val name = backStackEntry.arguments?.getString("name") ?: "Unknown"
-
-            PokemonDetailScreen(navController, id, name)
+        // Pantallas para agregar, modificar, eliminar y listar Pokémon
+        composable("addPokemonScreen") {
+            AddPokemonScreen(navController)
         }
 
+        composable("modifyPokemonScreen") {
+            ModifyPokemonScreen(navController)
+        }
 
+        composable("deletePokemonScreen") {
+            DeletePokemonScreen(navController)
+        }
+
+        composable("listPokemonScreen") {
+            ListPokemonScreen(navController)
+        }
+
+        // Pantallas para agregar, modificar, eliminar y listar Estadios
+        composable("addStadiumScreen") {
+            AddStadiumScreen(navController)
+        }
+
+        // Ruta para modificar estadio con stadiumId como parámetro
+        composable("modifyStadiumScreen/{stadiumId}") {
+            ModifyStadiumScreen(navController)
+        }
+
+        // Ruta para eliminar estadio con stadiumId como parámetro
+        composable("deleteStadiumScreen/{stadiumId}") {
+            DeleteStadiumScreen(navController)
+        }
+
+        composable("listStadiumScreen") {
+            ListStadiumScreen(navController)
+        }
     }
 }

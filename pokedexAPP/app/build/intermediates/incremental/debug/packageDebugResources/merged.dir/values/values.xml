@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">pokedexAPP</string>
+    <string name="default_web_client_id" translatable="false">134305904067-f14vm81cq3a9n1jm35andm2esmupum3a.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">134305904067</string>
+    <string name="google_api_key" translatable="false">AIzaSyCdTG52KfxhvkCzOZ-0EhfYQz6P85loI84</string>
+    <string name="google_app_id" translatable="false">1:134305904067:android:a408c543ee11374670f976</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCdTG52KfxhvkCzOZ-0EhfYQz6P85loI84</string>
+    <string name="google_storage_bucket" translatable="false">pokedexapp-26e7f.firebasestorage.app</string>
+    <string name="project_id" translatable="false">pokedexapp-26e7f</string>
+    <style name="Theme.PokedexAPP" parent="android:Theme.Material.Light.NoActionBar"/>
+</resources>

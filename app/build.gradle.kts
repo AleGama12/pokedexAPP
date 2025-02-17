@@ -74,6 +74,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
     implementation("com.google.android.gms:play-services-auth:20.7.0")  // Google Sign-In
     implementation("com.google.firebase:firebase-auth-ktx:22.1.2")      // Firebase Auth
+    implementation ("com.google.firebase:firebase-firestore-ktx:24.3.0")  // Verifica que sea la versión más reciente
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
