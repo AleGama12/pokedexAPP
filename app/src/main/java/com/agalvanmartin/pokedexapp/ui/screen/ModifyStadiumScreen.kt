@@ -27,8 +27,6 @@ fun ModifyStadiumScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val stadiumRepository = StadiumRepository()
-
-    // Función para buscar el estadio
     fun searchStadium() {
         scope.launch {
             try {
@@ -46,8 +44,6 @@ fun ModifyStadiumScreen(navController: NavController) {
             }
         }
     }
-
-    // Función para actualizar el estadio
     fun updateStadium() {
         if (stadiumName.isEmpty() || stadiumBadges.isEmpty()) {
             Toast.makeText(navController.context, "Por favor ingresa todos los datos", Toast.LENGTH_SHORT).show()
@@ -74,7 +70,6 @@ fun ModifyStadiumScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Flecha para regresar
         IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.align(Alignment.Start)) {
             Icon(Icons.Filled.ArrowBack, contentDescription = "Regresar", tint = Color.Black)
         }
@@ -84,8 +79,6 @@ fun ModifyStadiumScreen(navController: NavController) {
         Text(text = "Modificar Estadio", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Campo para el ID del estadio
         TextField(
             value = stadiumId,
             onValueChange = { stadiumId = it },
@@ -101,8 +94,6 @@ fun ModifyStadiumScreen(navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Botón para buscar el estadio
         Button(
             onClick = { searchStadium() },
             modifier = Modifier.fillMaxWidth(),
@@ -113,10 +104,7 @@ fun ModifyStadiumScreen(navController: NavController) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Si el estadio es encontrado, mostrar sus detalles y un botón para confirmar la actualización
         if (stadiumFound) {
-            // Campo para el nombre del estadio
             TextField(
                 value = stadiumName,
                 onValueChange = { stadiumName = it },
@@ -133,7 +121,6 @@ fun ModifyStadiumScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo para las insignias del estadio
             TextField(
                 value = stadiumBadges,
                 onValueChange = { stadiumBadges = it },
@@ -150,7 +137,6 @@ fun ModifyStadiumScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón para confirmar la actualización
             Button(
                 onClick = { updateStadium() },
                 modifier = Modifier.fillMaxWidth(),
@@ -164,10 +150,4 @@ fun ModifyStadiumScreen(navController: NavController) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewModifyStadiumScreen() {
-    ModifyStadiumScreen(navController = rememberNavController())
 }

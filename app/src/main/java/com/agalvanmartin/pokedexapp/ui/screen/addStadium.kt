@@ -138,9 +138,3 @@ fun AddStadiumScreen(navController: NavController) {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewAddStadiumScreen() {
-    AddStadiumScreen(navController = rememberNavController())
-}

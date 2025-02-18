@@ -41,7 +41,7 @@ class AuthManager(private val context: Context) {
     fun getCurrentUser(): FirebaseUser? = auth.currentUser
 
     fun signOut() {
-        auth.signOut()
+        FirebaseAuth.getInstance().signOut()
         googleSignInClient.signOut()
         googleSignInClient.revokeAccess()
     }

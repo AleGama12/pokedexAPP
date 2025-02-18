@@ -65,24 +65,22 @@ fun AddPokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Cuadro de texto para ID del Pokémon con un color de borde personalizado
         TextField(
             value = pokemonId,
             onValueChange = { pokemonId = it },
             label = { Text("ID del Pokémon") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xFFE0F7FA), // Color de fondo de los campos
-                focusedIndicatorColor = Color(0xFF00838F), // Color cuando está enfocado
-                unfocusedIndicatorColor = Color(0xFF00838F), // Color cuando no está enfocado
-                focusedLabelColor = Color(0xFF00838F), // Color de la etiqueta cuando está enfocado
-                unfocusedLabelColor = Color(0xFF00838F), // Color de la etiqueta cuando no está enfocado
+                containerColor = Color(0xFFE0F7FA),
+                focusedIndicatorColor = Color(0xFF00838F),
+                unfocusedIndicatorColor = Color(0xFF00838F),
+                focusedLabelColor = Color(0xFF00838F),
+                unfocusedLabelColor = Color(0xFF00838F),
             )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Cuadro de texto para Nombre del Pokémon
         TextField(
             value = pokemonName,
             onValueChange = { pokemonName = it },
@@ -99,7 +97,6 @@ fun AddPokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Cuadro de texto para Tipo del Pokémon
         TextField(
             value = pokemonType,
             onValueChange = { pokemonType = it },
@@ -116,7 +113,6 @@ fun AddPokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Cuadro de texto para Habilidades del Pokémon
         TextField(
             value = pokemonAbilities,
             onValueChange = { pokemonAbilities = it },
@@ -133,22 +129,15 @@ fun AddPokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botón para agregar el Pokémon con un color de fondo personalizado
         Button(
             onClick = { addPokemonToFirestore() },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF00838F), // Color de fondo del botón
-                contentColor = Color.White // Color del texto del botón
+                containerColor = Color(0xFF00838F),
+                contentColor = Color.White
             )
         ) {
             Text(text = "Agregar Pokémon")
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewAddPokemonScreen() {
-    AddPokemonScreen(navController = rememberNavController())
 }

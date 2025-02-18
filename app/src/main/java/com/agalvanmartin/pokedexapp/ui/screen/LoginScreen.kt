@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -25,13 +24,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.GoogleAuthProvider
 import com.agalvanmartin.pokedexapp.R
 import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
 import com.agalvanmartin.pokedexapp.data.repositories.AuthRes
-import com.agalvanmartin.pokedexapp.ui.screen.LightBlue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,7 +39,9 @@ fun LoginScreen(
     auth: AuthManager,
     navigateToSignUp: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToForgotPassword: () -> Unit
+    navigateToForgotPassword: () -> Unit,
+    function: () -> Unit,
+    function1: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -92,9 +91,6 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconButton(onClick = { navigateToSignUp() }, modifier = Modifier.align(Alignment.Start)) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Regresar", tint = LightBlue)
-            }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "POKEDEX",

@@ -146,9 +146,3 @@ fun MainScreen(navController: NavController, navigateToLogin: () -> Unit) {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewMainScreen() {
-    MainScreen(navController = rememberNavController(), navigateToLogin = {})
-}

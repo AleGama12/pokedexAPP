@@ -37,7 +37,6 @@ fun DeletePokemonScreen(navController: NavController) {
             return
         }
 
-        // Buscar el Pokémon en Firestore usando el ID
         db.collection("pokemons")
             .document(pokemonId)
             .get()
@@ -51,7 +50,6 @@ fun DeletePokemonScreen(navController: NavController) {
                         pokemonFound = true
                     }
                 } else {
-                    // Si no se encuentra el Pokémon
                     pokemonFound = false
                     Toast.makeText(navController.context, "Pokémon no encontrado.", Toast.LENGTH_SHORT).show()
                 }
@@ -86,7 +84,6 @@ fun DeletePokemonScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Flecha para regresar
         IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.align(Alignment.Start)) {
             Icon(Icons.Filled.ArrowBack, contentDescription = "Regresar", tint = Color.Black)
         }
@@ -97,7 +94,6 @@ fun DeletePokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo para el ID del Pokémon
         TextField(
             value = pokemonId,
             onValueChange = { pokemonId = it },
@@ -114,7 +110,6 @@ fun DeletePokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botón para buscar el Pokémon por ID
         Button(
             onClick = { searchPokemon() },
             modifier = Modifier.fillMaxWidth(),
@@ -128,7 +123,6 @@ fun DeletePokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Si el Pokémon es encontrado, mostrar sus detalles y un botón para confirmar eliminación
         if (pokemonFound) {
             Text(text = "Nombre: $pokemonName", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Tipo: $pokemonType", style = MaterialTheme.typography.bodyMedium)
@@ -136,7 +130,6 @@ fun DeletePokemonScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón para confirmar la eliminación
             Button(
                 onClick = { deletePokemon() },
                 modifier = Modifier.fillMaxWidth(),
@@ -149,10 +142,4 @@ fun DeletePokemonScreen(navController: NavController) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewDeletePokemonScreen() {
-    DeletePokemonScreen(navController = rememberNavController())
 }

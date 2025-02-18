@@ -10,10 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.agalvanmartin.pokedexapp.data.repositories.StadiumRepository
 import kotlinx.coroutines.launch
 
@@ -25,7 +23,6 @@ fun DeleteStadiumScreen(navController: NavController) {
     var stadiumBadges by remember { mutableStateOf("") }
     var stadiumFound by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-
     val stadiumRepository = StadiumRepository()
 
     // Función para buscar el estadio
@@ -112,26 +109,25 @@ fun DeleteStadiumScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Si el estadio es encontrado, mostrar sus detalles y un botón para confirmar eliminación
+        // Si el estadio es encontrado, mostrar sus detalles y un botón para confirmar la eliminación
         if (stadiumFound) {
             Text(text = "Nombre: $stadiumName", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Insignias: $stadiumBadges", style = MaterialTheme.typography.bodyMedium)
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Botón para confirmar la eliminación
             Button(
                 onClick = { deleteStadium() },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB71C1C))
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFB71C1C),
+                    contentColor = Color.White
+                )
             ) {
+                Icon(Icons.Filled.Delete, contentDescription = "Eliminar Estadio", modifier = Modifier.padding(end = 8.dp))
                 Text(text = "Confirmar Eliminación")
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewDeleteStadiumScreen() {
-    DeleteStadiumScreen(navController = rememberNavController())
 }

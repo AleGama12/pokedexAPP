@@ -25,7 +25,6 @@ fun ModifyPokemonScreen(navController: NavController) {
     var pokemonAbilities by remember { mutableStateOf("") }
     var pokemonFound by remember { mutableStateOf(false) }
 
-    // Función para buscar el Pokémon en Firestore y cargar los detalles
     fun searchPokemon() {
         val db = FirebaseFirestore.getInstance()
 
@@ -34,7 +33,6 @@ fun ModifyPokemonScreen(navController: NavController) {
             return
         }
 
-        // Buscar el Pokémon en Firestore usando el ID
         db.collection("pokemons")
             .document(pokemonId)
             .get()
@@ -58,7 +56,6 @@ fun ModifyPokemonScreen(navController: NavController) {
             }
     }
 
-    // Función para actualizar el Pokémon en Firestore
     fun updatePokemonInFirestore() {
         val db = FirebaseFirestore.getInstance()
 
@@ -88,7 +85,6 @@ fun ModifyPokemonScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Flecha para regresar
         IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.align(Alignment.Start)) {
             Icon(Icons.Filled.ArrowBack, contentDescription = "Regresar", tint = Color.Black)
         }
@@ -99,7 +95,6 @@ fun ModifyPokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo para el ID del Pokémon con los colores personalizados
         TextField(
             value = pokemonId,
             onValueChange = { pokemonId = it },
@@ -116,7 +111,6 @@ fun ModifyPokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botón para buscar el Pokémon por ID con el color personalizado
         Button(
             onClick = { searchPokemon() },
             modifier = Modifier.fillMaxWidth(),
@@ -130,9 +124,7 @@ fun ModifyPokemonScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mostrar los campos de texto solo si se encuentra el Pokémon
         if (pokemonFound) {
-            // Campo para el nombre con colores personalizados
             TextField(
                 value = pokemonName,
                 onValueChange = { pokemonName = it },
@@ -149,7 +141,6 @@ fun ModifyPokemonScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo para el tipo con colores personalizados
             TextField(
                 value = pokemonType,
                 onValueChange = { pokemonType = it },
@@ -166,7 +157,6 @@ fun ModifyPokemonScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo para las habilidades con colores personalizados
             TextField(
                 value = pokemonAbilities,
                 onValueChange = { pokemonAbilities = it },
@@ -183,7 +173,6 @@ fun ModifyPokemonScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón para actualizar el Pokémon con colores personalizados
             Button(
                 onClick = { updatePokemonInFirestore() },
                 modifier = Modifier.fillMaxWidth(),
@@ -196,10 +185,4 @@ fun ModifyPokemonScreen(navController: NavController) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewModifyPokemonScreen() {
-    ModifyPokemonScreen(navController = rememberNavController())
 }
