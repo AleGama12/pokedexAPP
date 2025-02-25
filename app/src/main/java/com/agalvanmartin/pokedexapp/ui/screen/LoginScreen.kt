@@ -1,9 +1,14 @@
 package com.agalvanmartin.pokedexapp.ui.screen
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.hardware.biometrics.BiometricPrompt
+import android.os.Build
+import android.os.CancellationSignal
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -32,6 +37,8 @@ import com.agalvanmartin.pokedexapp.data.repositories.AuthRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 
 @Composable
@@ -40,14 +47,15 @@ fun LoginScreen(
     navigateToSignUp: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToForgotPassword: () -> Unit,
-    function: () -> Unit,
-    function1: () -> Unit
 ) {
+
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
 
     val googleSignLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -152,7 +160,7 @@ fun LoginScreen(
                     }
                 },
                 text = "Continuar como invitado",
-                icon = com.google.android.gms.base.R.drawable.common_full_open_on_phone,
+                icon = R.drawable.ic_incognito,
                 color = Color.White
             )
             Spacer(modifier = Modifier.height(15.dp))

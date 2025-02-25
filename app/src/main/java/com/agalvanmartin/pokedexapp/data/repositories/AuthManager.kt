@@ -20,7 +20,10 @@ import kotlinx.coroutines.tasks.await
 class AuthManager(private val context: Context) {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
 
-    suspend fun createUserWithEmailAndPassword(email: String, password: String): AuthRes<FirebaseUser?> {
+    suspend fun createUserWithEmailAndPassword(
+        email: String,
+        password: String
+    ): AuthRes<FirebaseUser?> {
         return try {
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
             AuthRes.Success(authResult.user)
@@ -38,7 +41,6 @@ class AuthManager(private val context: Context) {
         }
     }
 
-    fun getCurrentUser(): FirebaseUser? = auth.currentUser
 
     fun signOut() {
         FirebaseAuth.getInstance().signOut()
@@ -51,7 +53,9 @@ class AuthManager(private val context: Context) {
             auth.sendPasswordResetEmail(email).await()
             AuthRes.Success(Unit)
         } catch (e: Exception) {
-            AuthRes.Error(e.message ?: "Error al restablecer la contraseña. Verifique el correo ingresado.")
+            AuthRes.Error(
+                e.message ?: "Error al restablecer la contraseña. Verifique el correo ingresado."
+            )
         }
     }
 
@@ -95,13 +99,13 @@ class AuthManager(private val context: Context) {
             .build()
         GoogleSignIn.getClient(context, gso)
     }
+
     fun signInWithGoogle(googleSignInLauncher: ActivityResultLauncher<Intent>) {
         val signInIntent = googleSignInClient.signInIntent
         googleSignInLauncher.launch(signInIntent)
     }
 
 }
-
 sealed class AuthRes<out T> {
     data class Success<T>(val data: T) : AuthRes<T>()
     data class Error(val errorMessage: String) : AuthRes<Nothing>()

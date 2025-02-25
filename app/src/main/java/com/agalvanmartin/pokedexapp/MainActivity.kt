@@ -19,14 +19,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MyAppTheme {
-                val navController = rememberNavController()  // Controlador de navegación
-                val authManager = AuthManager(this)  // Instancia de AuthManager para manejar la autenticación
-                APPnavigation(auth = authManager)  // Llama a la función de navegación con el AuthManager
+                val navController = rememberNavController()
+                val authManager = AuthManager(this)
+                APPnavigation(auth = authManager)
             }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        auth.signOut()    }
+        auth.signOut()
+    }
 }

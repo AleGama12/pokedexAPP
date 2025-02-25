@@ -21,13 +21,13 @@ import com.agalvanmartin.pokedexapp.data.repositories.AuthRes
 import com.agalvanmartin.pokedexapp.ui.screen.LightBlue
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun RegisterScreen(auth: AuthManager, navigateToLogin: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
+    var passwordVisible1 by remember { mutableStateOf(false) }
+    var passwordVisible2 by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -40,7 +40,7 @@ fun RegisterScreen(auth: AuthManager, navigateToLogin: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Crear Cuenta", fontSize = 22.sp, color = Color.Black)
+            Text(text = "Crear Cuenta", fontSize = 25.sp, color = LightBlue)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -60,12 +60,12 @@ fun RegisterScreen(auth: AuthManager, navigateToLogin: () -> Unit) {
                 onValueChange = { password = it },
                 label = { Text("Contraseña") },
                 singleLine = true,
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible1) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    IconButton(onClick = { passwordVisible1 = !passwordVisible1 }) {
                         Icon(
-                            imageVector = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            imageVector = if (passwordVisible1) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                             contentDescription = "Mostrar contraseña"
                         )
                     }
@@ -80,12 +80,12 @@ fun RegisterScreen(auth: AuthManager, navigateToLogin: () -> Unit) {
                 onValueChange = { confirmPassword = it },
                 label = { Text("Confirmar Contraseña") },
                 singleLine = true,
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible2) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    IconButton(onClick = { passwordVisible2 = !passwordVisible2 }) {
                         Icon(
-                            imageVector = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            imageVector = if (passwordVisible2) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                             contentDescription = "Mostrar contraseña"
                         )
                     }
@@ -107,7 +107,7 @@ fun RegisterScreen(auth: AuthManager, navigateToLogin: () -> Unit) {
                                 when (result) {
                                     is AuthRes.Success -> {
                                         message = "Registro exitoso. Redirigiendo..."
-                                        navigateToLogin()  // Redirige al login tras éxito
+                                        navigateToLogin()
                                     }
                                     is AuthRes.Error -> {
                                         message = result.errorMessage
@@ -140,7 +140,7 @@ fun RegisterScreen(auth: AuthManager, navigateToLogin: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = navigateToLogin) {
-                Text(text = "¿Ya tienes cuenta? Inicia sesión", color = Color.Black)
+                Text(text = "¿Ya tienes cuenta? Inicia sesión", color = LightBlue)
             }
         }
     }

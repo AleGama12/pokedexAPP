@@ -33,7 +33,7 @@ fun ForgotPasswordScreen(auth: AuthManager, navigateToLogin: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Restablecer Contraseña", fontSize = 22.sp, color = Color.Black)
+            Text(text = "Restablecer Contraseña", fontSize = 25.sp, color = LightBlue)
 
             Spacer(modifier = Modifier.height(16.dp))
 
