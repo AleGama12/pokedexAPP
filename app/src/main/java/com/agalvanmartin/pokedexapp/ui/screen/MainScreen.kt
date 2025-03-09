@@ -22,13 +22,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.agalvanmartin.pokedexapp.R
 import com.google.firebase.auth.FirebaseAuth
+import com.agalvanmartin.pokedexapp.data.repositories.AuthManager
+import androidx.compose.ui.platform.LocalContext
 
 val LightBlue = Color(0xFF87CEFA)
 
 @Composable
 fun MainScreen(navController: NavController, navigateToLogin: () -> Unit) {
-    val auth = FirebaseAuth.getInstance()
-
+    val context = LocalContext.current
+    val authManager = remember { AuthManager(context) }
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -126,7 +128,7 @@ fun MainScreen(navController: NavController, navigateToLogin: () -> Unit) {
                 confirmButton = {
                     Button(
                         onClick = {
-                            auth.signOut()
+                            authManager.signOut()
                             navigateToLogin()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),

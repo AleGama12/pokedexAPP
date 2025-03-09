@@ -43,9 +43,14 @@ class AuthManager(private val context: Context) {
 
 
     fun signOut() {
-        FirebaseAuth.getInstance().signOut()
-        googleSignInClient.signOut()
-        googleSignInClient.revokeAccess()
+        // Primero, revocar el acceso de Google
+        googleSignInClient.signOut().addOnCompleteListener {
+            // Luego revocar todos los permisos
+            googleSignInClient.revokeAccess().addOnCompleteListener {
+                // Finalmente, cerrar sesión en Firebase
+                FirebaseAuth.getInstance().signOut()
+            }
+        }
     }
 
     suspend fun resetPassword(email: String): AuthRes<Unit> {

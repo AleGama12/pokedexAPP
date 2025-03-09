@@ -10,7 +10,6 @@ import com.agalvanmartin.pokedexapp.ui.theme.MyAppTheme
 import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
-    val auth = AuthManager(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -24,10 +23,5 @@ class MainActivity : ComponentActivity() {
                 APPnavigation(auth = authManager)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        auth.signOut()
     }
 }
